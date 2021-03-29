@@ -1,5 +1,5 @@
 import os
-
+import random
 from src.data_synthesis import create_data
 from src.evaluator import IPSEvaluator
 
@@ -18,7 +18,7 @@ def mu(a, x):
 
 
 def policy(x):
-    pass
+    return random.uniform(0, 1)
 
 
 ips_eval = IPSEvaluator(policy, data, mu, pi)
