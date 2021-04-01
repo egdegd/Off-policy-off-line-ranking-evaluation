@@ -1,9 +1,11 @@
 import os
 import random
-from src.data_synthesis import create_data
+from src.data_synthesis import create_triples_from_context_vectors, create_context_vector, do_binary_vectors
 from src.evaluator import IPSEvaluator
 
-data = create_data('data/track2/training.txt')
+# path = create_context_vector()
+context = do_binary_vectors('data/track2/simple_context', 20)
+data = create_triples_from_context_vectors(context)
 
 
 def pi(a, x):
