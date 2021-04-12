@@ -4,13 +4,12 @@ from scipy.stats import bernoulli
 
 
 class Simulator:
-    def __init__(self, contexts, actions, log_policy, eval_policy, q=0.5):
+    def __init__(self, contexts, actions, policy, q=0.5):
         self.contexts = contexts
         self.actions = actions
         self.weights = None
         self.q = q
-        self.log_policy = log_policy
-        self.eval_policy = eval_policy
+        self.policy = policy
         self.number_of_action = len(actions)
         self.number_of_context, self.dim_state = contexts.shape
         self.init_weights()
@@ -33,6 +32,28 @@ class Simulator:
         cov = self.create_cov_matrix()
         addition = np.random.multivariate_normal(mean=np.zeros(self.dim_state), cov=cov, size=self.number_of_action)
         self.weights += np.multiply(q_vec.reshape((self.number_of_action, 1)), addition)
+
+    def simulate(self, T):
+        for t in range(T):
+            i = random.randint(0, self.number_of_context - 1)
+            x = self.contexts[i]
+            a = self.policy.give_a(x)
+            r = self.compute_reward(a, x)
+            self.policy.add_info(x, a, round(r))
+            self.update_reward()
+
+
+class ParallelSimulator(Simulator):
+    def __init__(self, contexts, actions, log_policy, eval_policy, q=0.5):
+        self.contexts = contexts
+        self.actions = actions
+        self.weights = None
+        self.q = q
+        self.log_policy = log_policy
+        self.eval_policy = eval_policy
+        self.number_of_action = len(actions)
+        self.number_of_context, self.dim_state = contexts.shape
+        self.init_weights()
 
     def simulate(self, T):
         for t in range(T):
