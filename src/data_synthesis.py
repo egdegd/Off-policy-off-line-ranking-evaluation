@@ -2,30 +2,6 @@ import pandas as pd
 import numpy as np
 
 
-def compute_reward(x, t, q):
-    np.random.seed(1337)
-    size = len(x)
-    cov = np.zeros((size, size))
-    for i in range(size):
-        cov[i][i] = 1
-    w = np.random.multivariate_normal(np.zeros(size), cov)
-    for i in range(t - 1):
-        check_q = np.random.rand()
-        if check_q < q:
-            w += np.random.multivariate_normal(np.zeros(size), cov)
-    return 1 / (1 + np.exp(- w.T @ x))
-
-
-def create_triples_from_context_vectors(vectors):
-    data = []
-    for t, sample in enumerate(vectors):
-        a = sample[0]
-        x = sample[1:]
-        r = compute_reward(x, t, 0.8)
-        data.append((x, a, round(r)))
-    return data
-
-
 def create_context_vector():
     def parse_line_with_slash(line):
         split_line = line.split()
@@ -64,7 +40,7 @@ def create_context_vector():
         userid_profile.append(new_info)
 
     with open('data/track2/training.txt') as file:
-        head = [next(file) for _ in range(10000)]
+        head = [next(file) for _ in range(10)]
     train = np.array(list(map(lambda x: x.split(), head)))
 
     data = []
@@ -123,7 +99,7 @@ def do_binary_vectors(path, size):
 
 def create_data_from_training_file(path):
     with open(path) as file:
-        head = [next(file) for _ in range(10000)]
+        head = [next(file) for _ in range(1000000)]
     train = np.array(list(map(lambda x: x.split(), head)))
 
     df = pd.DataFrame(train,
@@ -131,13 +107,14 @@ def create_data_from_training_file(path):
                                'QueryID',
                                'KeywordID', 'TitleID', 'DescriptionID', 'UserID'])
 
-    # pd.options.display.max_columns = 12
+    pd.options.display.max_columns = 12
+    print(df)
     data = []
 
-    for t, row in df.iterrows():
-        x = row['UserID']
-        a = row['AdID']
-        r = compute_reward(x, a, 0.8)
-        data.append((x, a, r))
+    # for t, row in df.iterrows():
+    #     x = row['UserID']
+    #     a = row['AdID']
+    #     r = compute_reward(x, a, 0.8)
+    #     data.append((x, a, r))
 
     return data
