@@ -20,6 +20,9 @@ class BasePolicy:
     def mean_reward(self):
         raise NotImplementedError
 
+    def train(self, data):
+        raise NotImplementedError
+
 
 class RandomPolicy(BasePolicy):
 
@@ -41,6 +44,9 @@ class RandomPolicy(BasePolicy):
 
     def mean_reward(self):
         return sum(map(lambda x: x[2], self.history)) / len(self.history)
+
+    def train(self, data):
+        pass
 
 
 class DeterministicPolicy(BasePolicy):
@@ -67,19 +73,20 @@ class DeterministicPolicy(BasePolicy):
     def mean_reward(self):
         return sum(map(lambda x: x[2], self.history)) / len(self.history)
 
+    def train(self, data):
+        pass
+
 
 class CBVowpalWabbit(BasePolicy):
-    def __init__(self, actions, train_data):
+    def __init__(self, actions):
         super().__init__()
         self.actions = actions
         self.number_of_action = len(actions)
-        self.train_data = train_data
         self.vw = pyvw.vw(f"--quiet --cb_explore {self.number_of_action}")
-        self.train()
         self.history = []
 
-    def train(self):
-        for (x, a, r) in self.train_data:
+    def train(self, train_data):
+        for (x, a, r) in train_data:
             feature_string = self.create_string(x)
             learn_example = str(a + 1) + ':' + str(r) + ':' + str(
                 round(1 / self.number_of_action, 3)) + ' | ' + feature_string

@@ -3,13 +3,13 @@ import numpy as np
 from scipy.stats import bernoulli
 
 
-class Simulator:
-    def __init__(self, contexts, actions, policy, q=0.5):
+class TwoStageSimulator:
+    def __init__(self, contexts, actions, log_policy, q=0.5):
         self.contexts = contexts
         self.actions = actions
         self.weights = None
         self.q = q
-        self.policy = policy
+        self.log_policy = log_policy
         self.number_of_action = len(actions)
         self.number_of_context, self.dim_state = contexts.shape
         self.init_weights()
@@ -33,36 +33,25 @@ class Simulator:
         addition = np.random.multivariate_normal(mean=np.zeros(self.dim_state), cov=cov, size=self.number_of_action)
         self.weights += np.multiply(q_vec.reshape((self.number_of_action, 1)), addition)
 
-    def simulate(self, T):
+    def simulate_train(self, T):
+        history_train = []
         for t in range(T):
             i = random.randint(0, self.number_of_context - 1)
             x = self.contexts[i]
-            a = self.policy.give_a(x)
+            a = self.log_policy.give_a(x)
             r = self.compute_reward(a, x)
-            self.policy.add_info(x, a, round(r))
+            history_train.append((x, a, round(r)))
             self.update_reward()
+        return history_train
 
-
-class ParallelSimulator(Simulator):
-    def __init__(self, contexts, actions, log_policy, eval_policy, q=0.5):
-        self.contexts = contexts
-        self.actions = actions
-        self.weights = None
-        self.q = q
-        self.log_policy = log_policy
-        self.eval_policy = eval_policy
-        self.number_of_action = len(actions)
-        self.number_of_context, self.dim_state = contexts.shape
-        self.init_weights()
-
-    def simulate(self, T):
+    def simulate(self, T, eval_policy):
         for t in range(T):
             i = random.randint(0, self.number_of_context - 1)
             x = self.contexts[i]
             a_log = self.log_policy.give_a(x)
             r_log = self.compute_reward(a_log, x)
-            a_eval = self.eval_policy.give_a(x)
+            a_eval = eval_policy.give_a(x)
             r_eval = self.compute_reward(a_eval, x)
             self.log_policy.add_info(x, a_log, round(r_log))
-            self.eval_policy.add_info(x, a_eval, round(r_eval))
+            eval_policy.add_info(x, a_eval, round(r_eval))
             self.update_reward()
