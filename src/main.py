@@ -11,8 +11,8 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 
 
 def parallel_stimulation(LogPolicyClass, EvalPolicyClass):
-    actions = np.arange(10)
-    contexts = np.random.randint(2, size=(20, 5))
+    actions = np.arange(20)
+    contexts = np.random.randint(2, size=(20, 100))
     log_policy = LogPolicyClass(actions)
     eval_policy = EvalPolicyClass(actions)
     simulator = ParallelSimulator(contexts, actions, log_policy, eval_policy)
@@ -21,8 +21,8 @@ def parallel_stimulation(LogPolicyClass, EvalPolicyClass):
 
 
 def simulation(PolicyClass, *args):
-    actions = np.arange(10)
-    contexts = np.random.randint(2, size=(20, 5))
+    actions = np.arange(20)
+    contexts = np.random.randint(2, size=(20, 100))
     policy = PolicyClass(actions, *args)
     simulator = Simulator(contexts, actions, policy)
     simulator.simulate(1000)

@@ -23,7 +23,7 @@ def create_plot(PolicyClass, policy_name):
         real_means_mb.append(real_mean_mb)
         eval_means_mb.append(eval_mean_mb)
 
-    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(20, 5))
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15, 5))
     fig.suptitle(policy_name)
 
     ax1.set_title("Inverse Propensity Scoring")
@@ -53,8 +53,9 @@ def create_plot_CBVowpalWabbit():
     eval_means_dr = []
     real_means_mb = []
     eval_means_mb = []
-    log_policy_ = simulation(RandomPolicy)
+    # log_policy_ = simulation(RandomPolicy) # I'm not sure if I need to generate log_policy_ many times
     for _ in range(100):
+        log_policy_ = simulation(RandomPolicy)
         eval_policy_ = simulation(CBVowpalWabbit, log_policy_.history)
         real_mean_ips, eval_mean_ips = ips(log_policy_, eval_policy_)
         real_mean_dr, eval_mean_dr = dr(log_policy_, eval_policy_)
@@ -66,7 +67,7 @@ def create_plot_CBVowpalWabbit():
         real_means_mb.append(real_mean_mb)
         eval_means_mb.append(eval_mean_mb)
 
-    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(20, 5))
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15, 5))
     fig.suptitle("Contextual Bandits with Vowpal Wabbit")
 
     ax1.set_title("Inverse Propensity Scoring")

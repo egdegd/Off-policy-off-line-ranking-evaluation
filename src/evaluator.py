@@ -26,7 +26,7 @@ class DoublyRobustEstimator:
         self.model_based_estimator = model_based_estimator
 
     def evaluate_one_reward(self, x, a, r):
-        mb = self.model_based_estimator.predict([np.append(x, [a])])[0]  # it can be round
+        mb = self.model_based_estimator.predict([np.append(x, [self.eval_policy.give_a(x)])])[0]  # it can be round
         return mb + (r - mb) * self.eval_policy.give_probability(x, a) / self.log_policy.give_probability(x, a)
 
     def evaluate_policy(self):
@@ -44,7 +44,7 @@ class ModelBasedEstimator:
         self.model_based_estimator = model_based_estimator
 
     def evaluate_one_reward(self, x, a, r):
-        mb = self.model_based_estimator.predict([np.append(x, [a])])[0]  # it can be round
+        mb = self.model_based_estimator.predict([np.append(x, [self.eval_policy.give_a(x)])])[0]  # it can be round
         return mb
 
     def evaluate_policy(self):
