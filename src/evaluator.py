@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 
 from src.policy import BasePolicy
+from sklearn.ensemble import RandomForestClassifier
 
 
 class IPSEvaluator:
@@ -32,7 +33,8 @@ class DoublyRobustEstimator:
     def train(self, data):
         X = np.array(list(map(lambda x: np.append(x[0], [x[1]]), data)))
         y = np.array(list(map(lambda x: x[2], data)))
-        self.model_based_estimator = LogisticRegression()
+        # self.model_based_estimator = LogisticRegression()
+        self.model_based_estimator = RandomForestClassifier(max_depth=5, random_state=0)
         self.model_based_estimator.fit(X, y)
 
     def evaluate_one_reward(self, x, a, r):
@@ -56,8 +58,10 @@ class ModelBasedEstimator:
     def train(self, data):
         X = np.array(list(map(lambda x: np.append(x[0], [x[1]]), data)))
         y = np.array(list(map(lambda x: x[2], data)))
-        self.model_based_estimator = LogisticRegression()
+        # self.model_based_estimator = LogisticRegression()
+        self.model_based_estimator = RandomForestClassifier(max_depth=5, random_state=0)
         self.model_based_estimator.fit(X, y)
+
 
     def evaluate_one_reward(self, x, a, r):
         mb = self.model_based_estimator.predict([np.append(x, [self.eval_policy.give_a(x)])])[0]  # it can be round
