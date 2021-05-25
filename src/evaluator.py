@@ -75,3 +75,26 @@ class ModelBasedEstimator:
             # expected_rewards.append(mb)
             expected_rewards.append(self.evaluate_one_reward(x, a, r))
         return np.array(expected_rewards).mean()
+
+
+class Replay:
+    def __init__(self, log_policy: BasePolicy, eval_policy: BasePolicy):
+        self.log_policy = log_policy
+        self.eval_policy = eval_policy
+        self.T = 0
+
+    def train(self, data):
+        pass
+
+    def evaluate_one_reward(self, x, a, r):
+        if a == self.eval_policy.give_a(x):
+            return r
+        return None
+
+    def evaluate_policy(self):
+        expected_rewards = []
+        for (x, a, r) in self.log_policy.history:
+            new_reward = self.evaluate_one_reward(x, a, r)
+            if new_reward is not None:
+                expected_rewards.append(new_reward)
+        return np.array(expected_rewards).mean()

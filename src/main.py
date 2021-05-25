@@ -8,8 +8,10 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 
 
 def simulation(EstimatorClass, EvalPolicyClass):
-    actions = np.arange(20)
-    contexts = np.random.randint(2, size=(20, 100))
+    # actions = np.arange(5)
+    # contexts = np.random.randint(2, size=(1, 1))
+    actions = np.arange(50)
+    contexts = np.random.randint(2, size=(20, 20))
 
     log_policy = RandomPolicy(actions)
     simulator = TwoStageSimulator(contexts, actions, log_policy)
@@ -24,8 +26,5 @@ def simulation(EstimatorClass, EvalPolicyClass):
     estimator = EstimatorClass(log_policy, eval_policy)
     estimator.train(train_history)
 
-    print(eval_policy.mean_reward(), estimator.evaluate_policy())
+    # print(eval_policy.mean_reward(), estimator.evaluate_policy())
     return eval_policy.mean_reward(), estimator.evaluate_policy()
-
-
-

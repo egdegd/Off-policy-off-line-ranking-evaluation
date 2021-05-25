@@ -88,7 +88,7 @@ class CBVowpalWabbit(BasePolicy):
     def train(self, train_data):
         for (x, a, r) in train_data:
             feature_string = self.create_string(x)
-            learn_example = str(a + 1) + ':' + str(r) + ':' + str(
+            learn_example = str(a + 1) + ':' + str(1 - r) + ':' + str(
                 round(1 / self.number_of_action, 3)) + ' | ' + feature_string
             self.vw.learn(learn_example)
 
