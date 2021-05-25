@@ -13,8 +13,10 @@ class TwoStageSimulator:
         self.number_of_action = len(actions)
         self.number_of_context, self.dim_state = contexts.shape
         self.init_weights()
+        self.random_rewards = np.random.rand(1, len(self.actions))[0]
 
     def compute_reward(self, a, x):
+        # return np.random.choice([0, 1], p=[self.random_rewards[a], 1 - self.random_rewards[a]])
         return 1 / (1 + np.exp(- self.weights[a].T @ x))
 
     def create_cov_matrix(self):
